@@ -1,5 +1,6 @@
 package com.celauro.SpendWise.entity;
 
+import com.celauro.SpendWise.utils.TransactionType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +8,8 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -18,16 +21,16 @@ public class Transaction {
     private long id;
 
     private String type;
-    private int amount;
+    private double amount;
     private String category;
-    private long date;
+    private LocalDate date;
     private String description;
 
-    public Transaction(String type, int amount, String category, long date,  String description) {
+    public Transaction(String type, double amount, String category,  String description) {
         this.type = type;
         this.amount = amount;
         this.category = category;
-        this.date = date;
+        this.date = LocalDate.now();
         this.description = description;
     }
 }

@@ -1,13 +1,17 @@
 package com.celauro.SpendWise.services;
 
+import com.celauro.SpendWise.dtos.NetStatsDTO;
+import com.celauro.SpendWise.dtos.TotalExpensesDTO;
+import com.celauro.SpendWise.dtos.TotalIncomeDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.entity.Transaction;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.TransactionRepository;
+import com.celauro.SpendWise.utils.TransactionType;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.NotFound;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +26,9 @@ public class TransactionService {
     }
 
     public TransactionDTO saveTransaction(TransactionDTO request){
-        transactionRepository.save(createTransactionEntity(request));
-        return request;
+        Transaction transaction = createTransactionEntity(request);
+        transactionRepository.save(transaction);
+        return toTransactionDTO(transaction);
     }
 
     public TransactionDTO getTransaction(long id) {
@@ -42,13 +47,17 @@ public class TransactionService {
 
         transaction.setAmount(request.getAmount());
         transaction.setDate(request.getDate());
-        transaction.setType(request.getType());
+        transaction.setType(request.getType().name());
         transaction.setCategory(request.getCategory());
         transaction.setDescription(request.getDescription());
 
         transactionRepository.save(transaction);
 
         return toTransactionDTO(transaction);
+    }
+
+    public NetStatsDTO getMonthlyNet(int month, int year){
+        return new NetStatsDTO(this.getTotalExpenses(month, year), this.getTotalIncome(month, year));
     }
 
 //  Helper methods
@@ -58,7 +67,7 @@ public class TransactionService {
 
     private TransactionDTO toTransactionDTO(Transaction transaction){
         return new TransactionDTO(
-                transaction.getType(),
+                TransactionType.valueOf(transaction.getType()),
                 transaction.getAmount(),
                 transaction.getCategory(),
                 transaction.getDate(),
@@ -70,7 +79,7 @@ public class TransactionService {
         return transactions.stream()
                 .map(transaction ->
                     new TransactionDTO(
-                            transaction.getType(),
+                            TransactionType.valueOf(transaction.getType()),
                             transaction.getAmount(),
                             transaction.getCategory(),
                             transaction.getDate(),
@@ -82,13 +91,37 @@ public class TransactionService {
 
     private Transaction createTransactionEntity(TransactionDTO dto){
         return new Transaction(
-                dto.getType(),
+                dto.getType().name(),
                 dto.getAmount(),
                 dto.getCategory(),
-                dto.getDate(),
                 dto.getDescription()
         );
     }
 
+    private List<Transaction> getFilteredListWithMonthAndYear(int month, int year) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
+        return transactionRepository.findByDateBetween(start, end);
+    }
+
+    private TotalExpensesDTO getTotalExpenses(int month, int year){
+        double total = getFilteredListWithMonthAndYear(month, year)
+                .stream()
+                .filter(transaction -> transaction.getType().equals(TransactionType.EXPENSES.name()))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        return new TotalExpensesDTO(total);
+    }
+
+    private TotalIncomeDTO getTotalIncome(int month, int year){
+        double total = getFilteredListWithMonthAndYear(month, year)
+                .stream()
+                .filter(transaction -> transaction.getType().equals(TransactionType.INCOME.name()))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        return new TotalIncomeDTO(total);
+    }
 }

@@ -1,5 +1,6 @@
 package com.celauro.SpendWise.controllers;
 
+import com.celauro.SpendWise.dtos.NetStatsDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.services.TransactionService;
 import jakarta.validation.Valid;
@@ -39,5 +40,10 @@ public class TransactionController {
     @PutMapping("/transaction/{id}")
     public TransactionDTO editTransaction(@PathVariable long id, @RequestBody @Valid TransactionDTO request){
         return transactionService.updateTransaction(id, request);
+    }
+
+    @GetMapping("/transactions/month")
+    public NetStatsDTO getFilteredList(@RequestParam("month") int month, @RequestParam("year") int year){
+        return transactionService.getMonthlyNet(month, year);
     }
 }
