@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class NetStatsDTO {
-    private TotalExpensesDTO totalExpenses;
-    private TotalIncomeDTO totalIncome;
+    private double totalExpense;
+    private double totalIncome;
+    private double balance;
 }

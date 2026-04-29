@@ -1,8 +1,6 @@
 package com.celauro.SpendWise.services;
 
 import com.celauro.SpendWise.dtos.NetStatsDTO;
-import com.celauro.SpendWise.dtos.TotalExpensesDTO;
-import com.celauro.SpendWise.dtos.TotalIncomeDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.entity.Transaction;
 import com.celauro.SpendWise.exceptions.NotFoundException;
@@ -57,7 +55,10 @@ public class TransactionService {
     }
 
     public NetStatsDTO getMonthlyNet(int month, int year){
-        return new NetStatsDTO(this.getTotalExpenses(month, year), this.getTotalIncome(month, year));
+        double income = getTotalIncome(month, year);
+        double expenses = getTotalExpenses(month, year);
+        double balance = income - expenses;
+        return new NetStatsDTO(expenses, income, balance);
     }
 
 //  Helper methods
@@ -105,23 +106,19 @@ public class TransactionService {
         return transactionRepository.findByDateBetween(start, end);
     }
 
-    private TotalExpensesDTO getTotalExpenses(int month, int year){
-        double total = getFilteredListWithMonthAndYear(month, year)
+    private double getTotalExpenses(int month, int year){
+        return getFilteredListWithMonthAndYear(month, year)
                 .stream()
                 .filter(transaction -> transaction.getType().equals(TransactionType.EXPENSES.name()))
                 .mapToDouble(Transaction::getAmount)
                 .sum();
-
-        return new TotalExpensesDTO(total);
     }
 
-    private TotalIncomeDTO getTotalIncome(int month, int year){
-        double total = getFilteredListWithMonthAndYear(month, year)
+    private double getTotalIncome(int month, int year){
+        return getFilteredListWithMonthAndYear(month, year)
                 .stream()
                 .filter(transaction -> transaction.getType().equals(TransactionType.INCOME.name()))
                 .mapToDouble(Transaction::getAmount)
                 .sum();
-
-        return new TotalIncomeDTO(total);
     }
 }
