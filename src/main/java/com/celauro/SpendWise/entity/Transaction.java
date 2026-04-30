@@ -1,20 +1,15 @@
 package com.celauro.SpendWise.entity;
 
-import com.celauro.SpendWise.utils.TransactionType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "transactions")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +17,15 @@ public class Transaction {
 
     private String type;
     private double amount;
-    private String category;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
     private LocalDate date;
     private String description;
 
-    public Transaction(String type, double amount, String category,  String description) {
+    public Transaction(String type, double amount, Category category,  String description) {
         this.type = type;
         this.amount = amount;
         this.category = category;

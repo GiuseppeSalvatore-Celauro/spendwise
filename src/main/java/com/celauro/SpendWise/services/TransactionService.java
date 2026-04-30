@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
+    private final CategoryService categoryService;
 
     public List<TransactionDTO> getAllTransactions(){
         List<Transaction> transactions = transactionRepository.findAll();
@@ -46,7 +47,7 @@ public class TransactionService {
         transaction.setAmount(request.getAmount());
         transaction.setDate(request.getDate());
         transaction.setType(request.getType().name());
-        transaction.setCategory(request.getCategory());
+        transaction.setCategory(categoryService.findOrThrowException(request.getCategory()));
         transaction.setDescription(request.getDescription());
 
         transactionRepository.save(transaction);
@@ -63,14 +64,14 @@ public class TransactionService {
 
 //  Helper methods
     private Transaction getByIdOrThrowException(long id){
-        return transactionRepository.findTransactionById(id).orElseThrow(() -> new NotFoundException ("Transazione inesistente"));
+        return transactionRepository.findTransactionById(id).orElseThrow(() -> new NotFoundException ("transaction not found"));
     }
 
     private TransactionDTO toTransactionDTO(Transaction transaction){
         return new TransactionDTO(
                 TransactionType.valueOf(transaction.getType()),
                 transaction.getAmount(),
-                transaction.getCategory(),
+                transaction.getCategory().getCategory(),
                 transaction.getDate(),
                 transaction.getDescription()
         );
@@ -82,7 +83,7 @@ public class TransactionService {
                     new TransactionDTO(
                             TransactionType.valueOf(transaction.getType()),
                             transaction.getAmount(),
-                            transaction.getCategory(),
+                            transaction.getCategory().getCategory(),
                             transaction.getDate(),
                             transaction.getDescription()
                     )
@@ -94,7 +95,7 @@ public class TransactionService {
         return new Transaction(
                 dto.getType().name(),
                 dto.getAmount(),
-                dto.getCategory(),
+                categoryService.findOrThrowException(dto.getCategory()),
                 dto.getDescription()
         );
     }

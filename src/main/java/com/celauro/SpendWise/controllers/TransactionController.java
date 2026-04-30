@@ -4,18 +4,16 @@ import com.celauro.SpendWise.dtos.NetStatsDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.services.TransactionService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/spendwise/api")
+@RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
 
     @PostMapping("/transaction")
     public TransactionDTO save(@RequestBody @Valid TransactionDTO request){
@@ -38,12 +36,18 @@ public class TransactionController {
     }
 
     @PutMapping("/transaction/{id}")
-    public TransactionDTO editTransaction(@PathVariable long id, @RequestBody @Valid TransactionDTO request){
+    public TransactionDTO editTransaction(
+            @PathVariable long id,
+            @RequestBody @Valid TransactionDTO request
+    ){
         return transactionService.updateTransaction(id, request);
     }
 
     @GetMapping("/transactions/month")
-    public NetStatsDTO getFilteredList(@RequestParam("month") int month, @RequestParam("year") int year){
+    public NetStatsDTO getFilteredList(
+            @RequestParam("month") int month,
+            @RequestParam("year") int year
+    ){
         return transactionService.getMonthlyNet(month, year);
     }
 }
