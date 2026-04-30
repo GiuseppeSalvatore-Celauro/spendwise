@@ -1,17 +1,18 @@
 package com.celauro.SpendWise.services;
 
 import com.celauro.SpendWise.dtos.CategoryTotalDTO;
+import com.celauro.SpendWise.dtos.MonthlyExpensesDTO;
 import com.celauro.SpendWise.dtos.NetStatsDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.entity.Transaction;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.TransactionRepository;
-import com.celauro.SpendWise.utils.CategoryTotal;
 import com.celauro.SpendWise.utils.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,8 +59,8 @@ public class TransactionService {
     }
 
     public NetStatsDTO getMonthlyNet(int month, int year){
-        double income = getTotalIncome(month, year);
-        double expenses = getTotalExpenses(month, year);
+        double income = getMonthlyIncome(month, year);
+        double expenses = getMonthlyExpenses(month, year);
         double balance = income - expenses;
         return new NetStatsDTO(expenses, income, balance);
     }
@@ -69,6 +70,20 @@ public class TransactionService {
                 .stream()
                 .map(total -> new CategoryTotalDTO(total.getCategory(), total.getTotal()))
                 .toList();
+    }
+
+    public List<MonthlyExpensesDTO> getTransactionTrend(int year) {
+        List<MonthlyExpensesDTO> list = new ArrayList<>();
+        int currentMonth = LocalDate.now().getMonth().getValue();
+        int startingPoint = 1;
+        while(startingPoint <= currentMonth){
+            double expenses = getMonthlyExpenses(startingPoint, year);
+            MonthlyExpensesDTO dto = new MonthlyExpensesDTO(startingPoint, expenses);
+            list.add(dto);
+            startingPoint++;
+        }
+
+        return list;
     }
 
 //  Helper methods
@@ -116,7 +131,7 @@ public class TransactionService {
         return transactionRepository.findByDateBetween(start, end);
     }
 
-    private double getTotalExpenses(int month, int year){
+    private double getMonthlyExpenses(int month, int year){
         return getFilteredListWithMonthAndYear(month, year)
                 .stream()
                 .filter(transaction -> transaction.getType().equals(TransactionType.EXPENSES.name()))
@@ -124,7 +139,7 @@ public class TransactionService {
                 .sum();
     }
 
-    private double getTotalIncome(int month, int year){
+    private double getMonthlyIncome(int month, int year){
         return getFilteredListWithMonthAndYear(month, year)
                 .stream()
                 .filter(transaction -> transaction.getType().equals(TransactionType.INCOME.name()))
