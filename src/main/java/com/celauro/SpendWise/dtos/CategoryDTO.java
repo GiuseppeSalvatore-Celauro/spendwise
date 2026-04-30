@@ -11,4 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryDTO {
     private String category;
+    private String userEmail;
 }

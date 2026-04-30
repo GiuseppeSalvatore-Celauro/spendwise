@@ -2,6 +2,7 @@ package com.celauro.SpendWise.services;
 
 import com.celauro.SpendWise.dtos.CategoryDTO;
 import com.celauro.SpendWise.entity.Category;
+import com.celauro.SpendWise.entity.User;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final UserService userService;
 
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
@@ -20,7 +22,11 @@ public class CategoryService {
     }
 
     public CategoryDTO saveCategory(CategoryDTO request) {
-        Category category = new Category(request.getCategory());
+        User user = userService.findOrThrowException(request.getUserEmail());
+        Category category = new Category(
+                request.getCategory(),
+                user
+        );
         categoryRepository.save(category);
         return toDto(category);
     }
@@ -30,12 +36,18 @@ public class CategoryService {
     }
 
     public CategoryDTO toDto(Category category) {
-        return new CategoryDTO(category.getCategory());
+        return new CategoryDTO(
+                category.getCategory(),
+                category.getUser().getEmail()
+        );
     }
 
     private List<CategoryDTO> toListOfDto_Category(List<Category> categories) {
         return categories.stream()
-                .map(category -> new CategoryDTO(category.getCategory()))
+                .map(category -> new CategoryDTO(
+                        category.getCategory(),
+                        category.getUser().getEmail()
+                ))
                 .toList();
     }
 }

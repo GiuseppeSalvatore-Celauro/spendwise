@@ -17,7 +17,12 @@ public class Category {
 
     private String category;
 
-    public Category(String category){
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Category(String category, User user){
         this.category = category;
+        this.user = user;
     }
 }
