@@ -1,9 +1,6 @@
 package com.celauro.SpendWise.services;
 
-import com.celauro.SpendWise.dtos.CategoryTotalDTO;
-import com.celauro.SpendWise.dtos.MonthlyExpensesDTO;
-import com.celauro.SpendWise.dtos.NetStatsDTO;
-import com.celauro.SpendWise.dtos.TransactionDTO;
+import com.celauro.SpendWise.dtos.*;
 import com.celauro.SpendWise.entity.Transaction;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.TransactionRepository;
@@ -21,6 +18,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final CategoryService categoryService;
+    private final UserService userService;
 
     public List<TransactionDTO> getAllTransactions(){
         List<Transaction> transactions = transactionRepository.findAll();
@@ -48,10 +46,11 @@ public class TransactionService {
         Transaction transaction = getByIdOrThrowException(id);
 
         transaction.setAmount(request.getAmount());
-        transaction.setDate(request.getDate());
         transaction.setType(request.getType().name());
         transaction.setCategory(categoryService.findOrThrowException(request.getCategory()));
         transaction.setDescription(request.getDescription());
+
+        transaction.updateTransaction();
 
         transactionRepository.save(transaction);
 
@@ -95,9 +94,11 @@ public class TransactionService {
         return new TransactionDTO(
                 TransactionType.valueOf(transaction.getType()),
                 transaction.getAmount(),
+                transaction.getUser().getEmail(),
                 transaction.getCategory().getCategory(),
-                transaction.getDate(),
-                transaction.getDescription()
+                transaction.getUpdatedAt(),
+                transaction.getDescription(),
+                transaction.getPaymentMethod()
         );
     }
 
@@ -107,9 +108,11 @@ public class TransactionService {
                     new TransactionDTO(
                             TransactionType.valueOf(transaction.getType()),
                             transaction.getAmount(),
+                            transaction.getUser().getEmail(),
                             transaction.getCategory().getCategory(),
-                            transaction.getDate(),
-                            transaction.getDescription()
+                            transaction.getUpdatedAt(),
+                            transaction.getDescription(),
+                            transaction.getPaymentMethod()
                     )
                 )
                 .collect(Collectors.toList());
@@ -119,8 +122,10 @@ public class TransactionService {
         return new Transaction(
                 dto.getType().name(),
                 dto.getAmount(),
+                userService.findOrThrowException(dto.getUserEmail()),
                 categoryService.findOrThrowException(dto.getCategory()),
-                dto.getDescription()
+                dto.getDescription(),
+                dto.getPaymentMethod()
         );
     }
 
@@ -128,7 +133,7 @@ public class TransactionService {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        return transactionRepository.findByDateBetween(start, end);
+        return transactionRepository.findByUpdatedAtBetween(start, end);
     }
 
     private double getMonthlyExpenses(int month, int year){
@@ -146,4 +151,5 @@ public class TransactionService {
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }
+
 }

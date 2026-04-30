@@ -29,7 +29,7 @@ public class CategoryService {
         return categoryRepository.findByCategory(category).orElseThrow(()->new NotFoundException("Category not found"));
     }
 
-    private CategoryDTO toDto(Category category) {
+    public CategoryDTO toDto(Category category) {
         return new CategoryDTO(category.getCategory());
     }
 

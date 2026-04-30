@@ -16,6 +16,9 @@ public class TransactionDTO {
 
     private double amount;
 
+    @NotBlank(message = "user required")
+    private String userEmail;
+
     @NotBlank(message = "category required")
     private String category;
 
@@ -23,4 +26,7 @@ public class TransactionDTO {
 
     @NotBlank(message = "description required")
     private String description;
+
+    @NotBlank(message = "payment method required")
+    private String paymentMethod;
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     Optional<Transaction> findTransactionById(long id);
-    List<Transaction> findByDateBetween(LocalDate start, LocalDate end);
+    List<Transaction> findByUpdatedAtBetween(LocalDate start, LocalDate end);
 
 
     @Query(value = """
@@ -27,7 +27,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     ) AS total
     FROM Transaction t
     JOIN t.category c
-    WHERE MONTH(t.date) = :month AND YEAR(t.date) = :year
+    WHERE MONTH(t.updatedAt) = :month AND YEAR(t.updatedAt) = :year
     GROUP BY c.category
 """)
     List<CategoryTotal> getTotalsByCategory(

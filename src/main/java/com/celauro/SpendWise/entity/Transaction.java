@@ -19,17 +19,37 @@ public class Transaction {
     private double amount;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    private LocalDate date;
     private String description;
 
-    public Transaction(String type, double amount, Category category,  String description) {
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+
+    @Column(name = "created_at")
+    private LocalDate createdAt;
+
+    @Column(name = "last_update")
+    private LocalDate updatedAt;
+
+    public Transaction(String type, double amount, User user,Category category,  String description, String paymentMethod) {
         this.type = type;
         this.amount = amount;
+        this.user = user;
         this.category = category;
-        this.date = LocalDate.now();
         this.description = description;
+        this.paymentMethod = paymentMethod;
+        this.createdAt = LocalDate.now();
+        this.updatedAt= LocalDate.now();
+    }
+
+    public void updateTransaction(){
+        this.updatedAt = LocalDate.now();
     }
 }
