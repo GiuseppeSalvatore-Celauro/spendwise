@@ -1,10 +1,12 @@
 package com.celauro.SpendWise.services;
 
+import com.celauro.SpendWise.dtos.CategoryTotalDTO;
 import com.celauro.SpendWise.dtos.NetStatsDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.entity.Transaction;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.TransactionRepository;
+import com.celauro.SpendWise.utils.CategoryTotal;
 import com.celauro.SpendWise.utils.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,13 @@ public class TransactionService {
         double expenses = getTotalExpenses(month, year);
         double balance = income - expenses;
         return new NetStatsDTO(expenses, income, balance);
+    }
+
+    public List<CategoryTotalDTO> getCategoryTotals(int month, int year){
+        return transactionRepository.getTotalsByCategory(month, year)
+                .stream()
+                .map(total -> new CategoryTotalDTO(total.getCategory(), total.getTotal()))
+                .toList();
     }
 
 //  Helper methods

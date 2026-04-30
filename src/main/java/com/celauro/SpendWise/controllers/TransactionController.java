@@ -1,5 +1,6 @@
 package com.celauro.SpendWise.controllers;
 
+import com.celauro.SpendWise.dtos.CategoryTotalDTO;
 import com.celauro.SpendWise.dtos.NetStatsDTO;
 import com.celauro.SpendWise.dtos.TransactionDTO;
 import com.celauro.SpendWise.services.TransactionService;
@@ -49,5 +50,13 @@ public class TransactionController {
             @RequestParam("year") int year
     ){
         return transactionService.getMonthlyNet(month, year);
+    }
+
+    @GetMapping("/transactions/category")
+    public List<CategoryTotalDTO> getTotalByCategory(
+            @RequestParam("month") int month,
+            @RequestParam("year") int year
+    ){
+        return transactionService.getCategoryTotals(month, year);
     }
 }
