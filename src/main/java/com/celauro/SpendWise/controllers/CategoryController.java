@@ -2,6 +2,7 @@ package com.celauro.SpendWise.controllers;
 
 import com.celauro.SpendWise.dtos.CategoryDTO;
 import com.celauro.SpendWise.services.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class CategoryController {
     }
 
     @PostMapping("/category")
-    public CategoryDTO saveCategory(@RequestBody CategoryDTO request){
+    public CategoryDTO saveCategory(@RequestBody @Valid CategoryDTO request){
         return categoryService.saveCategory(request);
     }
 }

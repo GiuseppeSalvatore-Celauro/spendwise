@@ -14,8 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserDTO {
     private long id;
-    private String username;
     private String email;
+    private String name;
+    private String surname;
     private boolean isActive;
     private LocalDate createdAt;
     private LocalDate updatedAt;

@@ -17,12 +17,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String username;
-
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
-
     private String password;
+    private String name;
+    private String surname;
 
     @Column(name = "is_active")
     private boolean isActive;
@@ -31,10 +30,11 @@ public class User {
     @Column(name = "last_update")
     private LocalDate updatedAt;
 
-    public User(String username, String email, String password) {
-        this.username = username;
+    public User(String email, String password, String name, String surname) {
         this.email = email;
         this.password = password;
+        this.name = name;
+        this.surname = surname;
         this.isActive = true;
         this.createdAt = LocalDate.now();
         this.updatedAt = LocalDate.now();

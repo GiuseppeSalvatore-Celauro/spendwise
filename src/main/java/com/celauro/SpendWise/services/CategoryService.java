@@ -6,6 +6,8 @@ import com.celauro.SpendWise.entity.User;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class CategoryService {
     }
 
     public CategoryDTO saveCategory(CategoryDTO request) {
-        User user = userService.findOrThrowException(request.getUserEmail());
+        User user = userService.getCurrentUser();
         Category category = new Category(
                 request.getCategory(),
                 user
@@ -31,8 +33,15 @@ public class CategoryService {
         return toDto(category);
     }
 
-    public Category findOrThrowException(String category){
-        return categoryRepository.findByCategory(category).orElseThrow(()->new NotFoundException("Category not found"));
+    public Category findOrThrowException(String category, String email){
+        User user = userService.getCurrentUser();
+        Category foundCategory =  categoryRepository.findByCategory(category).orElseThrow(()->new NotFoundException("Category not found"));
+
+        if(user != foundCategory.getUser()){
+            throw new NotFoundException("this category does not exist");
+        }
+
+        return foundCategory;
     }
 
     public CategoryDTO toDto(Category category) {

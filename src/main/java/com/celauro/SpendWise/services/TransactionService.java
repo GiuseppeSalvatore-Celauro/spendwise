@@ -47,7 +47,7 @@ public class TransactionService {
 
         transaction.setAmount(request.getAmount());
         transaction.setType(request.getType().name());
-        transaction.setCategory(categoryService.findOrThrowException(request.getCategory()));
+        transaction.setCategory(categoryService.findOrThrowException(request.getCategory(), request.getUserEmail()));
         transaction.setDescription(request.getDescription());
 
         transaction.updateTransaction();
@@ -122,8 +122,8 @@ public class TransactionService {
         return new Transaction(
                 dto.getType().name(),
                 dto.getAmount(),
-                userService.findOrThrowException(dto.getUserEmail()),
-                categoryService.findOrThrowException(dto.getCategory()),
+                userService.getCurrentUser(),
+                categoryService.findOrThrowException(dto.getCategory(), dto.getUserEmail()),
                 dto.getDescription(),
                 dto.getPaymentMethod()
         );
