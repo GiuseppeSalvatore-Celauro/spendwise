@@ -67,4 +67,9 @@ public class TransactionController {
     ){
         return transactionService.getTransactionTrend(year);
     }
+
+    @GetMapping("/hello")
+    public String sayHello(){
+        return "hello world!";
+    }
 }

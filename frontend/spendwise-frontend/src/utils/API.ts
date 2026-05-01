@@ -6,7 +6,7 @@ export default class API{
     }
 
     setUrl(url: string): void{
-        this.url = `http://localhost:8080/api${url}`;
+        this.url = `/api${url}`;
     }
 
     async fetchPost(data: object){
