@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/spendwise/api")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
