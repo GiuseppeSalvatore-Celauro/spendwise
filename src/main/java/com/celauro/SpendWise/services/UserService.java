@@ -8,19 +8,15 @@ import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayDeque;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class UserService implements UserDetailsService{
+public class UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -36,22 +32,6 @@ public class UserService implements UserDetailsService{
         userRepository.save(newUser);
 
         return toDto(newUser);
-    }
-
-    public List<UserDTO> getAllUser(){
-        List<User> users = userRepository.findAll();
-        return toListOfDto_User(users);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = checkIfUserExist(email);
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                new ArrayDeque<>()
-        );
     }
 
     public String loginUser(UserLoginDTO request) {
