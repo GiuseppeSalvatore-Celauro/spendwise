@@ -6,7 +6,7 @@ export default class API{
     }
 
     setUrl(url: string): void{
-        this.url = `/api${url}`;
+        this.url = `http://localhost:8080/api${url}`;
     }
 
     async fetchPost(data: object){
@@ -51,7 +51,18 @@ export default class API{
     }
 
     async fetchGet(){
-        const rawResponse = await fetch (this.url);
+        const token = localStorage.getItem("token")
+        if(!token){
+            return null;
+        }
+
+        const rawResponse = await fetch (this.url, {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json"
+            }
+        })
         const content = await rawResponse.json();
         return content;  
     }

@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -37,7 +36,40 @@
             </div>
         </nav>
         
+        <div class="container-full mt-2">
+            <div class="row justify-content-center">
+                <div class="col-10">
+                    <div class="row justify-content-between">
+                        <div class="col-5 text-center border rounded-2">
+                            <p class="fs-custom-10 mb-1 text-secondary">Totale entrate mensili</p>
+                            <h3 class="fw-bold" id="totalIncome">0</h3>
+                        </div>
+                        <div class="col-5 text-center border rounded-2">
+                            <p class="fs-custom-10 mb-1 text-secondary">Totale spese mensili</p>
+                            <h3 class="fw-bold" id="totalExcpenses">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3 id="transactionsTitle">Transazioni registrate</h3>
+                    <div class="border rounded-2 mt-2">
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <script src="./dashboard.ts"></script>
+        <script type="module" src="./dashboard.ts"></script>
     </body>
 </html>

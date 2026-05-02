@@ -32,7 +32,10 @@ async function loginUser(api: API, User: object){
     try{
         const response = await api.fetchPost_forText(User);
         localStorage.setItem("token", response);
-        window.location.href = "../../dashboard/dashboard.html";
+
+        if(localStorage.getItem("token")){
+            window.location.href = "../../dashboard/dashboard.html";
+        }
         
     }catch(error){
         console.error(error);
