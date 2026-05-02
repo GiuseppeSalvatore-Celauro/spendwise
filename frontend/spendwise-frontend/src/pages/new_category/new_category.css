@@ -1,0 +1,9 @@
+.toggler-custom{
+    padding: 0.5rem;
+    border: none;
+    background-color: transparent;
+}
+
+.h-75-custom{
+    height: 75dvh;
+}

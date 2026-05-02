@@ -23,6 +23,26 @@ export default class API{
         return content;
     }
 
+    async fetchPost_withToken(data: object){
+        const token = localStorage.getItem("token")
+        if(!token){
+            return null;
+        }
+
+        const rawResponse = await fetch(this.url, {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json",
+                "Content-type" : "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const content = await rawResponse.json();
+        
+        return content;
+    }
+
     async fetchPost_forText(data: object){
          const rawResponse = await fetch(this.url, {
             method: "POST",

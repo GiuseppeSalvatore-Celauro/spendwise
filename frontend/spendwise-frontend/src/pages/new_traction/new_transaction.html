@@ -1,0 +1,92 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SpendWise - New transaction</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="./new_transaction.css">
+    </head>
+    <body>
+        <nav class="navbar bg-body-tertiary" id="navbar">
+            <div class="container-fluid" >
+                <a class="navbar-brand" href="../dashboard/dashboard.html">SpendWise</a>
+                <button class="toggler-custom" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div id="collapseContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="../new_traction/new_transaciton.html">Nuova transazione</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../new_category/new_category.html">Crea nuova categoria</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../dashboard/dashboard.html">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <form id="logoutForm">
+                                <button class="nav-link" type="submit">Disconnettiti</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-12">
+                    <h3 id="transactionsTitle" class="text-center">Crea la tua prima transazione</h3>
+                    <div class="container mt-5 h-75-custom">
+                    <div class="row justify-content-center">
+                        <div class="col-12 d-flex justify-content-center align-items-center">
+                        <div class="login-card" style="width: 18rem; height: 100%;">
+                            <div class="card-body">
+                                <div class="d-flex flex-column gap-5">
+                                    <form id="transactionForm">
+                                        <div class="mb-3">
+                                            <label for="type" class="form-label">Tipo</label>
+                                            <select class="form-select" name="type" id="type">
+                                                <option value="INCOME">Entrata</option>
+                                                <option value="EXPENSE">Uscita</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="amount" class="form-label">Importo</label>
+                                            <input type="number" name="amount" class="form-control" id="amount">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="category"  class="form-label">Categoria</label>
+                                            <select class="form-select" disabled name="category" id="category">
+                                                <option value="Videogiochi">Crea nuove categorie prima</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Descrizione</label>
+                                            <input type="text" name="description" class="form-control" id="description">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="paymentMethod" class="form-label">Metodo di pagamento</label>
+                                            <input type="text" name="paymentMethod" class="form-control" id="paymentMethod">
+                                        </div>
+                                        <div class="d-flex flex-column mt-5 gap-3 justify-content-center">
+                                            <button type="submit" class="btn btn-primary">Crea</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script type="module" src="./new_transaction.ts"></script>
+    </body>
+</html>
