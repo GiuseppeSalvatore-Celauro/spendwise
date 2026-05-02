@@ -17,7 +17,7 @@ public class CategoryService {
     private final UserService userService;
 
     public List<CategoryDTO> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAllByUser(userService.getCurrentUser());
         return toListOfDto_Category(categories);
     }
 
