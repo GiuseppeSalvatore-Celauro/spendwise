@@ -2,6 +2,7 @@ package com.celauro.SpendWise.dtos;
 
 import com.celauro.SpendWise.utils.TransactionType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,8 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class TransactionDTO {
-    @NotNull(message = "type required")
-    private TransactionType type;
+    @NotEmpty(message = "type required")
+    private String type;
 
     @NotNull(message = "amount required")
     @Positive(message = "amount should always be positive")

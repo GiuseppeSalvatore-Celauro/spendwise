@@ -4,11 +4,13 @@ import com.celauro.SpendWise.dtos.*;
 import com.celauro.SpendWise.entity.Transaction;
 import com.celauro.SpendWise.exceptions.ErrorDateException;
 import com.celauro.SpendWise.exceptions.NotFoundException;
+import com.celauro.SpendWise.exceptions.NotValidType;
 import com.celauro.SpendWise.exceptions.UnauthorizedUserException;
 import com.celauro.SpendWise.repositories.TransactionRepository;
 import com.celauro.SpendWise.utils.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -54,8 +56,12 @@ public class TransactionService {
 
         validUserOrThrowException(transaction);
 
+        if(!TransactionType.findByName(request.getType())){
+            throw new NotValidType("type not valid");
+        }
+
         transaction.setAmount(request.getAmount());
-        transaction.setType(request.getType().name());
+        transaction.setType(request.getType());
         transaction.setCategory(categoryService.findOrThrowException(request.getCategory()));
         transaction.setDescription(request.getDescription());
 
@@ -118,7 +124,7 @@ public class TransactionService {
 
     private TransactionDTO toTransactionDTO(Transaction transaction){
         return new TransactionDTO(
-                TransactionType.valueOf(transaction.getType()),
+                transaction.getType(),
                 transaction.getAmount(),
                 transaction.getCategory().getCategory(),
                 transaction.getUpdatedAt(),
@@ -131,7 +137,7 @@ public class TransactionService {
         return transactions.stream()
                 .map(transaction ->
                     new TransactionDTO(
-                            TransactionType.valueOf(transaction.getType()),
+                            transaction.getType(),
                             transaction.getAmount(),
                             transaction.getCategory().getCategory(),
                             transaction.getUpdatedAt(),
@@ -143,8 +149,12 @@ public class TransactionService {
     }
 
     private Transaction createTransactionEntity(TransactionDTO dto){
+        if(!TransactionType.findByName(dto.getType())){
+            throw new NotValidType("not valid type");
+        }
+
         return new Transaction(
-                dto.getType().name(),
+                dto.getType(),
                 dto.getAmount(),
                 userService.getCurrentUser(),
                 categoryService.findOrThrowException(dto.getCategory()),
@@ -163,7 +173,7 @@ public class TransactionService {
     private double getMonthlyExpenses(int month, int year){
         return getFilteredListWithMonthAndYear(month, year)
                 .stream()
-                .filter(transaction -> transaction.getType().equals(TransactionType.EXPENSES.name()))
+                .filter(transaction -> transaction.getType().equals(TransactionType.EXPENSE.name()))
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }
