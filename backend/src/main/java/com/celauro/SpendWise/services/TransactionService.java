@@ -25,7 +25,7 @@ public class TransactionService {
     private final UserService userService;
 
     public List<TransactionDTO> getAllTransactions(){
-        List<Transaction> transactions = transactionRepository.findAllByUser(userService.getCurrentUser());
+        List<Transaction> transactions = transactionRepository.findAllByUserOrderByUpdatedAtDescIdDesc(userService.getCurrentUser());
         return toListOfResponse_transactions(transactions);
     }
 

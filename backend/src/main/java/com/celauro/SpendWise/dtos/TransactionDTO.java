@@ -1,6 +1,5 @@
 package com.celauro.SpendWise.dtos;
 
-import com.celauro.SpendWise.utils.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

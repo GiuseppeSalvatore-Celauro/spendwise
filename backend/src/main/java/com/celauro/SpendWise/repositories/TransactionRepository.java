@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findAllByUser(User user);
+    List<Transaction> findAllByUserOrderByUpdatedAtDescIdDesc(User user);
     Optional<Transaction> findTransactionById(long id);
     List<Transaction> findByUserAndUpdatedAtBetween(User user, LocalDate start, LocalDate end);
 

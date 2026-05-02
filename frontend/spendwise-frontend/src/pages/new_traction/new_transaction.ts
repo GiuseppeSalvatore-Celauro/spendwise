@@ -40,9 +40,9 @@ async function createTransaction(api: API, Transaction: object){
         const response = await api.fetchPost_withToken(Transaction);
         console.log(Transaction);
         
-        // if(response){
-        //     window.location.href = "../dashboard/dashboard.html";
-        // }
+        if(response){
+            window.location.href = "../dashboard/dashboard.html";
+        }
         
     }catch(error){
         console.error(error);

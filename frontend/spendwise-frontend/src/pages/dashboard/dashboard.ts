@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "../auth/login/login.html"
     }
 
+    incomeValue!.innerHTML = totalIncome.toString();
+    expenseValue!.innerHTML = totalExpenses.toString();
+
     const api = new API();
     
     setupTotalValues(api);
@@ -58,6 +61,8 @@ async function setupTransactionAccordion(api:API){
     }
 
     transactions.forEach((transaction:any, i:number) => {
+        console.log(transaction);
+        
         let tipo;
         if(transaction.type == "EXPENSE") tipo = "Spesa";
         if(transaction.type == "INCOME") tipo = "Incasso";
