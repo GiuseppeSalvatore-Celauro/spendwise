@@ -1,6 +1,7 @@
 package com.celauro.SpendWise.repositories;
 
 import com.celauro.SpendWise.entity.Transaction;
+import com.celauro.SpendWise.entity.User;
 import com.celauro.SpendWise.utils.CategoryTotal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,8 +14,9 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+    List<Transaction> findAllByUser(User user);
     Optional<Transaction> findTransactionById(long id);
-    List<Transaction> findByUpdatedAtBetween(LocalDate start, LocalDate end);
+    List<Transaction> findByUserAndUpdatedAtBetween(User user, LocalDate start, LocalDate end);
 
 
     @Query(value = """
@@ -27,10 +29,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     ) AS total
     FROM Transaction t
     JOIN t.category c
-    WHERE MONTH(t.updatedAt) = :month AND YEAR(t.updatedAt) = :year
+    WHERE
+        t.user = :user
+        AND
+        MONTH(t.updatedAt) = :month
+        AND
+        YEAR(t.updatedAt) = :year
     GROUP BY c.category
 """)
     List<CategoryTotal> getTotalsByCategory(
+            @Param("user") User user,
             @Param("month") int month,
             @Param("year") int year
     );

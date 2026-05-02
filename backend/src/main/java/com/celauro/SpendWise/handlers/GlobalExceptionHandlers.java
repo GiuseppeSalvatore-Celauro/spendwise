@@ -24,7 +24,7 @@ public class GlobalExceptionHandlers {
                                                 .map(err -> new ValidationErrDTO(err.getField(), err.getDefaultMessage()))
                                                 .toList();
 
-        ErrorDTO error = errorFormatter(e, request);
+        ErrorDTO error = errorFormatter(e, request, HttpStatus.BAD_REQUEST);
         error.setMessages(validationErr);
         error.setMessage(null);
         return error;
@@ -32,23 +32,23 @@ public class GlobalExceptionHandlers {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDTO NotFoundException(Exception e, HttpServletRequest request){
+    public ErrorDTO NotFoundException(NotFoundException e, HttpServletRequest request){
         Logger.error("Transazione non trovata", e);
-        return errorFormatter(e, request);
+        return errorFormatter(e, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDTO Exception(Exception e, HttpServletRequest request){
         Logger.error("Errore interno al server", e);
-        return errorFormatter(e, request);
+        return errorFormatter(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ErrorDTO errorFormatter(Exception e, HttpServletRequest request){
+    private ErrorDTO errorFormatter(Exception e, HttpServletRequest request, HttpStatus status){
         ErrorDTO error = new ErrorDTO();
-        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setStatus(status.value());
         error.setTimestamp(System.currentTimeMillis());
-        error.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
+        error.setError(status.getReasonPhrase());
         error.setMessage(e.getMessage());
         error.setPath(request.getRequestURI());
         error.setMethod(request.getMethod());

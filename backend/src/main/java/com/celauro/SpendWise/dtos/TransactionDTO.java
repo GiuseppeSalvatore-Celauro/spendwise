@@ -12,8 +12,10 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 public class TransactionDTO {
+    @NotBlank(message = "type required")
     private TransactionType type;
 
+    @NotBlank(message = "amount required")
     private double amount;
 
     @NotBlank(message = "category required")

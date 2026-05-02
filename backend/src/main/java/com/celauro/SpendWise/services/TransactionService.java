@@ -2,7 +2,9 @@ package com.celauro.SpendWise.services;
 
 import com.celauro.SpendWise.dtos.*;
 import com.celauro.SpendWise.entity.Transaction;
+import com.celauro.SpendWise.exceptions.ErrorDateException;
 import com.celauro.SpendWise.exceptions.NotFoundException;
+import com.celauro.SpendWise.exceptions.UnauthorizedUserException;
 import com.celauro.SpendWise.repositories.TransactionRepository;
 import com.celauro.SpendWise.utils.TransactionType;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class TransactionService {
     private final UserService userService;
 
     public List<TransactionDTO> getAllTransactions(){
-        List<Transaction> transactions = transactionRepository.findAll();
+        List<Transaction> transactions = transactionRepository.findAllByUser(userService.getCurrentUser());
         return toListOfResponse_transactions(transactions);
     }
 
@@ -33,17 +35,24 @@ public class TransactionService {
 
     public TransactionDTO getTransaction(long id) {
         Transaction transaction = getByIdOrThrowException(id);
+
+        validUserOrThrowException(transaction);
+
         return toTransactionDTO(transaction);
     }
 
+
     public TransactionDTO deleteTransaction(long id) {
         Transaction transaction = getByIdOrThrowException(id);
+        validUserOrThrowException(transaction);
         transactionRepository.delete(transaction);
         return toTransactionDTO(transaction);
     }
 
     public TransactionDTO updateTransaction(long id, TransactionDTO request){
         Transaction transaction = getByIdOrThrowException(id);
+
+        validUserOrThrowException(transaction);
 
         transaction.setAmount(request.getAmount());
         transaction.setType(request.getType().name());
@@ -58,6 +67,8 @@ public class TransactionService {
     }
 
     public NetStatsDTO getMonthlyNet(int month, int year){
+        validMonthOrThrowException(month);
+
         double income = getMonthlyIncome(month, year);
         double expenses = getMonthlyExpenses(month, year);
         double balance = income - expenses;
@@ -65,11 +76,14 @@ public class TransactionService {
     }
 
     public List<CategoryTotalDTO> getCategoryTotals(int month, int year){
-        return transactionRepository.getTotalsByCategory(month, year)
+        validMonthOrThrowException(month);
+
+        return transactionRepository.getTotalsByCategory(userService.getCurrentUser(), month, year)
                 .stream()
                 .map(total -> new CategoryTotalDTO(total.getCategory(), total.getTotal()))
                 .toList();
     }
+
 
     public List<MonthlyExpensesDTO> getTransactionTrend(int year) {
         List<MonthlyExpensesDTO> list = new ArrayList<>();
@@ -86,8 +100,20 @@ public class TransactionService {
     }
 
 //  Helper methods
+    private void validMonthOrThrowException(int month) {
+        if(month > 12 || month < 1){
+            throw new ErrorDateException("not valid month");
+        }
+    }
+
+    private void validUserOrThrowException(Transaction transaction) {
+        if(transaction.getUser() != userService.getCurrentUser()){
+            throw new UnauthorizedUserException("you are not the owner of this transaction");
+        }
+    }
+
     private Transaction getByIdOrThrowException(long id){
-        return transactionRepository.findTransactionById(id).orElseThrow(() -> new NotFoundException ("transaction not found"));
+        return transactionRepository.findTransactionById(id).orElseThrow(() -> new NotFoundException("transaction not found"));
     }
 
     private TransactionDTO toTransactionDTO(Transaction transaction){
@@ -131,7 +157,7 @@ public class TransactionService {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
 
-        return transactionRepository.findByUpdatedAtBetween(start, end);
+        return transactionRepository.findByUserAndUpdatedAtBetween(userService.getCurrentUser(), start, end);
     }
 
     private double getMonthlyExpenses(int month, int year){
