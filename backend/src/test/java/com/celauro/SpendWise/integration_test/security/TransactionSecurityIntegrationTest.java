@@ -77,7 +77,7 @@ public class TransactionSecurityIntegrationTest {
         CategoryDTO category = new CategoryDTO("Casa");
 
         TransactionDTO transaction = new TransactionDTO(
-                TransactionType.INCOME,
+                TransactionType.INCOME.name(),
                 100.00,
                 "Casa",
                 LocalDate.now(),
@@ -114,7 +114,7 @@ public class TransactionSecurityIntegrationTest {
         CategoryDTO category = new CategoryDTO("Casa");
 
         TransactionDTO transaction = new TransactionDTO(
-                TransactionType.INCOME,
+                TransactionType.INCOME.name(),
                 100.00,
                 "Casa",
                 LocalDate.now(),
