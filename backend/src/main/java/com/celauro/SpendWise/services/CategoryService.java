@@ -20,9 +20,10 @@ public class CategoryService {
 
     public List<CategoryDTO> getAllCategories() {
         User currentUser = userService.getCurrentUser();
+        log.info("Requested all user categories - userId={} email={}", currentUser.getId(), currentUser.getEmail());
 
         List<Category> categories = categoryRepository.findAllByUser(currentUser);
-        log.info("Requested all user categories - userId={} email={}", currentUser.getId(), currentUser.getEmail());
+        log.info("Sending all user categories - categoriesSize={} userId={} email={}", categories.size(), currentUser.getId(), currentUser.getEmail());
         return toListOfDto_Category(categories);
     }
 
@@ -36,7 +37,7 @@ public class CategoryService {
         );
 
         categoryRepository.save(category);
-        log.info("New category created successfully - userId={} email={}", currentUser.getId(), currentUser.getEmail());
+        log.info("New category created successfully - categoryId={} userId={} email={}", category.getId(), currentUser.getId(), currentUser.getEmail());
         return toDto(category);
     }
 
@@ -52,7 +53,7 @@ public class CategoryService {
             throw new NotFoundException("this category does not exist");
         }
 
-        log.info("Category required succes - userId={} email={}", currentUser.getId(), currentUser.getEmail());
+        log.info("Sending required category - categoryId={} userId={} email={}", foundCategory.getId(), currentUser.getId(), currentUser.getEmail());
         return foundCategory;
     }
 
