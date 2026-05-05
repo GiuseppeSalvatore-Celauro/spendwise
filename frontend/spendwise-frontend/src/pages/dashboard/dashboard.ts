@@ -1,20 +1,22 @@
 import API from "../../utils/API";
+import TokenManager from "../../utils/TokenManager.ts";
+import { authGuard } from "../../utils/AuthGuard.ts"
+import Router from "../../utils/Router.ts";
 
 const logout = document.querySelector<HTMLFormElement>("#logoutForm");
 const incomeValue = document.querySelector<HTMLParagraphElement>("#totalIncome");
 const expenseValue = document.querySelector<HTMLParagraphElement>("#totalExcpenses");
 const accordionFlushExample = document.querySelector<HTMLDivElement>("#accordionFlushExample");
+const token = new TokenManager();
+const router = new Router();
 
 let totalExpenses = 0;
 let totalIncome = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
-    if(localStorage.getItem("token") == null ){
-        window.location.href = "../auth/login/login.html"
-    }
+    authGuard();
 
-    incomeValue!.innerHTML = totalIncome.toString();
-    expenseValue!.innerHTML = totalExpenses.toString();
+    setUpMonthlyRecap();
 
     const api = new API();
     
@@ -25,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 logout?.addEventListener("submit", (e)=>{
     e.preventDefault();
-    localStorage.clear();
-    window.location.href = "../../../index.html"
+    token.clearToken();
+    router.go("login")
 })
 
 async function loadMontlyInocomeAndEpenses(api: API){
@@ -40,8 +42,7 @@ async function setupTotalValues(api:API){
     api.setUrl(`/transactions/month?month=${date.getMonth()+1}&year=${date.getFullYear()}`);
     await loadMontlyInocomeAndEpenses(api);
 
-    incomeValue!.innerHTML = totalIncome.toString();
-    expenseValue!.innerHTML = totalExpenses.toString();
+    setUpMonthlyRecap();
 }
 
 async function loadAllTransactions(api:API){
@@ -60,10 +61,12 @@ async function setupTransactionAccordion(api:API){
         accordionFlushExample?.classList.add("hidden")
     }
 
-    transactions.forEach((transaction:any, i:number) => {
-        console.log(transaction);
-        
+    transactions.forEach((transaction:any, i:number) => {        
         let tipo;
+
+        let amountToString = transaction.amount.toString();
+        let convertedAmount = amountToString.replace(/\./g, ",");
+
         if(transaction.type == "EXPENSE") tipo = "Spesa";
         if(transaction.type == "INCOME") tipo = "Incasso";
         accordionFlushExample!.innerHTML += `
@@ -77,7 +80,7 @@ async function setupTransactionAccordion(api:API){
                     <div class="accordion-body">
                         <div>
                             <p class="h2">
-                                Totale: ${transaction.amount}
+                                Totale: € ${convertedAmount}
                             </p>
                             <p>
                                 ${transaction.description}
@@ -93,4 +96,12 @@ async function setupTransactionAccordion(api:API){
     });
     
 
+}
+
+function setUpMonthlyRecap(){
+    let incomeToString = totalIncome.toString();
+    let expenseToString = totalExpenses.toString();
+
+    incomeValue!.innerHTML = incomeToString.replace(/\./g, ",");
+    expenseValue!.innerHTML = expenseToString.replace(/\./g, ",");
 }
