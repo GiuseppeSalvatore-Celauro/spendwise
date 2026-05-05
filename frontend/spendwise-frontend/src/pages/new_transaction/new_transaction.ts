@@ -39,19 +39,29 @@ transactionForm?.addEventListener("submit", (e)=>{
     api.setUrl("/transaction");
 
     createTransaction(api, Transaction);
+
     
 })
 
 async function createTransaction(api: API, Transaction: object){
     try{
         const response = await api.fetchPost_withToken(Transaction);
-        
-        if(response){
-            router.go("dashaboard");
+                
+        if(response.messages != null){
+            response.messages.forEach((message: any) => {
+                let singleElement = transactionForm!.elements[message.field] as any;
+                singleElement.classList.add("border-danger", "placeholder-color");
+                singleElement.placeholder = message.message;
+            }); 
+            return;
         }
         
+        router.go("dashaboard");
+
+
     }catch(error){
-        console.error(error);
+        console.log(error);
+        
     }
 }
 

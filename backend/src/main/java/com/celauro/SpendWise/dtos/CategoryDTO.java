@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDTO {
-    @NotBlank
+    @NotBlank(message = "category field required")
     private String category;
 }

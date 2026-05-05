@@ -40,10 +40,17 @@ function setupApi(): API{
 async function createTransaction(api: API, Category: object){
     try{
         const response = await api.fetchPost_withToken(Category);
-        
-        if(response){
-            router.go("dashaboard");
+
+        if(response.messages != null){
+            response.messages.forEach((message: any) => {
+                let singleElement = categoryForm!.elements[message.field] as any;
+                singleElement.classList.add("border-danger", "placeholder-color");
+                singleElement.placeholder = message.message;
+            }); 
+            return;
         }
+        
+        router.go("newTransaction");
         
     }catch(error){
         console.error(error);

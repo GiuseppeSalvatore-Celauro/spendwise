@@ -12,10 +12,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserLoginDTO {
-    @NotBlank
+    @NotBlank(message = "email field required")
     @Email
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "password field required")
     private String password;
 }

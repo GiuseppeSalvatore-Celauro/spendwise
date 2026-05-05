@@ -38,7 +38,17 @@ function setupApi(): API{
 
 async function registerUser(api: API, User: object){
     try{
-        await api.fetchPost(User);
+        const response = await api.fetchPost(User);
+
+        if(response.messages != null){
+            response.messages.forEach((message: any) => {
+                let singleElement = form!.elements[message.field] as any;
+                singleElement.classList.add("border-danger", "placeholder-color");
+                singleElement.placeholder = message.message;
+            }); 
+            return;
+        }
+        
         router.go("login");
         
     }catch(error){

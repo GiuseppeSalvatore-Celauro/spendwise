@@ -7,3 +7,7 @@
 .h-75-custom{
     height: 75dvh;
 }
+
+input::placeholder{
+    color: rgb(220, 53, 69) !important;
+}

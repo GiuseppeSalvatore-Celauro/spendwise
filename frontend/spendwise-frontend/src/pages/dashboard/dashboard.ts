@@ -94,8 +94,6 @@ async function setupTransactionAccordion(api:API){
             </div>
         `
     });
-    
-
 }
 
 function setUpMonthlyRecap(){

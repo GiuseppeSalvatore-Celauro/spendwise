@@ -3,6 +3,7 @@ import TokenManager from "../../../utils/TokenManager";
 import Router from "../../../utils/Router";
 
 const form = document.querySelector<HTMLFormElement>("#loginForm");
+const allertBox = document.querySelector("#allertBox");
 const token = new TokenManager();
 const router = new Router();
 
@@ -35,12 +36,31 @@ function setupApi(): API{
 async function loginUser(api: API, User: object){
     try{
         const response = await api.fetchPost(User);
-        console.log(response);
-        token.setToken(response);
 
-        if(token.getToken()){
-            router.go("dashaboard");
+        if(response.messages != null){
+            response.messages.forEach((message: any) => {
+                let singleElement = form!.elements[message.field] as any;
+                singleElement.classList.add("border-danger", "placeholder-color");
+                singleElement.placeholder = message.message;
+            }); 
+            return;
         }
+
+        if(response.message != null){
+            allertBox?.classList.remove("my-5")
+            allertBox?.classList.add("mt-5")
+
+            allertBox!.innerHTML = `
+                <div class="alert alert-danger id="loginAllert" role="alert">
+                    invalid credentials
+                </div>
+            `
+
+            return;
+        }
+
+        token.setToken(response);
+        router.go("dashaboard");
         
     }catch(error){
         console.error(error);

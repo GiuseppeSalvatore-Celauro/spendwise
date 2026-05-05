@@ -5,7 +5,7 @@ export default class Router{
         register: "/src/pages/auth/register/register.html",
         dashaboard: "/src/pages/dashboard/dashboard.html",
         newCategory: "/src/pages/new_category/new_category.html",
-        newTransaction: "/src/pages/new_transaciton/new_transaciton.html"
+        newTransaction: "/src/pages/new_transaction/new_transaction.html"
     }
 
     go(route: keyof typeof this.routes){

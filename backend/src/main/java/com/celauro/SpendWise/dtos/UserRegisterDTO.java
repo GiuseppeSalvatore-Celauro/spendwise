@@ -12,16 +12,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRegisterDTO {
-    @NotBlank
+    @NotBlank(message = "email field required")
     @Email
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "password field required")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "name field required")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "surname field required")
     private String surname;
 }

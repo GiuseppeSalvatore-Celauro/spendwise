@@ -17,9 +17,9 @@ public class TransactionDTO {
     @NotEmpty(message = "type required")
     private String type;
 
-    @NotNull(message = "amount required")
+    @NotNull(message = "amount field required")
     @Positive(message = "amount should always be positive")
-    private double amount;
+    private Double amount;
 
     @NotBlank(message = "category required")
     private String category;
