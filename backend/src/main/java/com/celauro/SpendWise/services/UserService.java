@@ -7,6 +7,9 @@ import com.celauro.SpendWise.entity.User;
 import com.celauro.SpendWise.exceptions.NotFoundException;
 import com.celauro.SpendWise.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService{
@@ -31,7 +35,7 @@ public class UserService{
 
         userRepository.save(newUser);
 
-
+        log.info("User register correctly - email={}", newUser.getEmail());
         return toDto(newUser);
     }
 
@@ -39,9 +43,11 @@ public class UserService{
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new NotFoundException("User not found"));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            log.warn("Login failed - email={}", request.getEmail());
             throw new RuntimeException("Invalid credentials");
         }
 
+        log.info("User logged in - email={}", user.getEmail());
         return jwtService.generatedToken(user.getEmail());
     }
 
