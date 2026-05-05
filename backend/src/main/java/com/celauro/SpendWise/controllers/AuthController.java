@@ -1,5 +1,6 @@
 package com.celauro.SpendWise.controllers;
 
+import com.celauro.SpendWise.dtos.JwtDTO;
 import com.celauro.SpendWise.dtos.UserDTO;
 import com.celauro.SpendWise.dtos.UserLoginDTO;
 import com.celauro.SpendWise.dtos.UserRegisterDTO;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody @Valid UserLoginDTO request){
+    public JwtDTO loginUser(@RequestBody @Valid UserLoginDTO request){
         log.info("User try to login - email{}", request.getEmail());
         return userService.loginUser(request);
     }

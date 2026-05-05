@@ -1,5 +1,6 @@
 package com.celauro.SpendWise.services;
 
+import com.celauro.SpendWise.dtos.JwtDTO;
 import com.celauro.SpendWise.dtos.UserDTO;
 import com.celauro.SpendWise.dtos.UserLoginDTO;
 import com.celauro.SpendWise.dtos.UserRegisterDTO;
@@ -39,7 +40,7 @@ public class UserService{
         return toDto(newUser);
     }
 
-    public String loginUser(UserLoginDTO request) {
+    public JwtDTO loginUser(UserLoginDTO request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new NotFoundException("User not found"));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
@@ -48,7 +49,12 @@ public class UserService{
         }
 
         log.info("User logged in - email={}", user.getEmail());
-        return jwtService.generatedToken(user.getEmail());
+
+        JwtDTO token = new JwtDTO();
+        token.setToken(jwtService.generatedToken(user.getEmail()));
+        token.setExpDate(jwtService.getExpiration(token.getToken()));
+
+        return token;
     }
 
 
