@@ -1,12 +1,19 @@
 import API from "../../utils/API";
+import TokenManager from "../../utils/TokenManager.ts";
+import { authGuard } from "../../utils/AuthGuard.ts"
+import Router from "../../utils/Router.ts";
 
 const logout = document.querySelector<HTMLFormElement>("#logoutForm");
 const categoryForm = document.querySelector<HTMLFormElement>("#categoryForm");
+const token = new TokenManager;
+const router = new Router;
+
+authGuard();
 
 logout?.addEventListener("submit", (e)=>{
     e.preventDefault();
-    localStorage.clear();
-    window.location.href = "../../../index.html"
+    token.clearToken();
+    router.go("index");
 })
 
 categoryForm?.addEventListener("submit", (e)=>{
@@ -35,7 +42,7 @@ async function createTransaction(api: API, Category: object){
         const response = await api.fetchPost_withToken(Category);
         
         if(response){
-            window.location.href = "../dashboard/dashboard.html";
+            router.go("dashaboard");
         }
         
     }catch(error){

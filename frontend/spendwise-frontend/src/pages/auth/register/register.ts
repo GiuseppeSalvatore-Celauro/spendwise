@@ -1,9 +1,14 @@
 import API from "../../../utils/API";
+import TokenManager from "../../../utils/TokenManager";
+import Router from "../../../utils/Router";
+
 
 const form = document.querySelector<HTMLFormElement>("#registerForm");
+const token = new TokenManager();
+const router = new Router();
 
-if(localStorage.getItem("token") != null){
-    localStorage.clear();
+if(token.getToken() != null){
+    token.clearToken();
 }
 
 
@@ -34,7 +39,7 @@ function setupApi(): API{
 async function registerUser(api: API, User: object){
     try{
         await api.fetchPost(User);
-        window.location.href = "../login/login.html";
+        router.go("login");
         
     }catch(error){
         console.error(error);

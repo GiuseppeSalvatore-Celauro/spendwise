@@ -1,7 +1,14 @@
 import API from "../../utils/API";
+import TokenManager from "../../utils/TokenManager.ts";
+import { authGuard } from "../../utils/AuthGuard.ts"
+import Router from "../../utils/Router.ts";
 
 const logout = document.querySelector<HTMLFormElement>("#logoutForm");
 const transactionForm = document.querySelector<HTMLFormElement>("#transactionForm");
+const token = new TokenManager;
+const router = new Router;
+
+authGuard();
 
 let api: API;
 document.addEventListener("DOMContentLoaded", ()=>{
@@ -11,8 +18,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 logout?.addEventListener("submit", (e)=>{
     e.preventDefault();
-    localStorage.clear();
-    window.location.href = "../../../index.html"
+    token.clearToken();
+    router.go("index");
 })
 
 transactionForm?.addEventListener("submit", (e)=>{
@@ -38,10 +45,9 @@ transactionForm?.addEventListener("submit", (e)=>{
 async function createTransaction(api: API, Transaction: object){
     try{
         const response = await api.fetchPost_withToken(Transaction);
-        console.log(Transaction);
         
         if(response){
-            window.location.href = "../dashboard/dashboard.html";
+            router.go("dashaboard");
         }
         
     }catch(error){
@@ -59,8 +65,6 @@ async function setupCategories(api: API){
         categorySelect!.disabled = false;
         
     }
-    
-    
 
     categories.forEach((category: any) => {
         categorySelect!.innerHTML +=`

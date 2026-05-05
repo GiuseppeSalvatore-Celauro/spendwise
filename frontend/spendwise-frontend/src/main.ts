@@ -1,2 +1,5 @@
+import TokenManager from "./utils/TokenManager";
 
-localStorage.clear();
+const token = new TokenManager;
+
+token.clearToken();

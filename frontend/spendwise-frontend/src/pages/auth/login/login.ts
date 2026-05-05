@@ -1,9 +1,13 @@
 import API from "../../../utils/API";
+import TokenManager from "../../../utils/TokenManager";
+import Router from "../../../utils/Router";
 
 const form = document.querySelector<HTMLFormElement>("#loginForm");
+const token = new TokenManager();
+const router = new Router();
 
-if(localStorage.getItem("token") != null){
-    localStorage.clear();
+if(token.getToken() != null){
+    token.clearToken();
 }
 
 form?.addEventListener("submit", (e) => {
@@ -30,11 +34,12 @@ function setupApi(): API{
 
 async function loginUser(api: API, User: object){
     try{
-        const response = await api.fetchPost_forText(User);
-        localStorage.setItem("token", response);
+        const response = await api.fetchPost(User);
+        console.log(response);
+        token.setToken(response);
 
-        if(localStorage.getItem("token")){
-            window.location.href = "../../dashboard/dashboard.html";
+        if(token.getToken()){
+            router.go("dashaboard");
         }
         
     }catch(error){
